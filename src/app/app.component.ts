@@ -19,8 +19,17 @@ export class AppComponent {
   constructor(private af: AngularFire) {}
 
   ngOnInit() {
-    this.cuisines = this.af.database.list('/cuisines');
-    this.restaurants = this.af.database.list('/restaurants')
+    this.cuisines = this.af.database.list('/cuisines', {
+      query: {
+        orderByValue: true
+      }
+    });
+
+    this.restaurants = this.af.database.list('/restaurants', {
+      query: {
+        orderByChild: 'address/city'
+      }
+    })
       .map(restaurants => {
         console.log("BEFORE MAP", restaurants);
         restaurants.map(restaurant => {
@@ -32,6 +41,7 @@ export class AppComponent {
         console.log("AFTER MAP", restaurants);
         return restaurants;
       });
+
     this.restaurant = this.af.database.object('/restaurant');
 
     this.exists = this.af.database.object('/restaurants/1/features/1');
