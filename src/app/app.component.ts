@@ -8,8 +8,12 @@ import { AngularFire } from 'angularfire2';
 })
 export class AppComponent {
   title = 'app works!';
+  cuisines;
 
   constructor(af: AngularFire) {
-    console.log(af);
+    af.database.list('/cuisines').subscribe(x => {
+      this.cuisines = x;
+      console.log(this.cuisines);
+    });
   }
 }
