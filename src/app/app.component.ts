@@ -29,7 +29,8 @@ export class AppComponent {
       query: {
         orderByChild: 'rating', //we filter this property
         startAt: 3, //add this to Firebase Console -> Rules: "restaurants": { ".indexOn": ["rating", "address/city"] }
-        endAt: 5
+        endAt: 5,
+        limitToFirst: 10 //or limitToLast
       }
     })
       .map(restaurants => {
