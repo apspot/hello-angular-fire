@@ -9,7 +9,6 @@ import { AngularFire } from 'angularfire2';
 export class AppComponent {
   title = 'app works!';
   cuisines;
-  private subscription;
 
   constructor(private af: AngularFire) {}
 
