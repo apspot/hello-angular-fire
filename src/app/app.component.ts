@@ -9,10 +9,12 @@ import { AngularFire } from 'angularfire2';
 export class AppComponent {
   title = 'app works!';
   cuisines;
+  restaurant;
 
   constructor(private af: AngularFire) {}
 
   ngOnInit() {
     this.cuisines = this.af.database.list('/cuisines');
+    this.restaurant = this.af.database.object('/restaurant');
   }
 }
