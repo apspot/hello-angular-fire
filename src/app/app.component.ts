@@ -26,4 +26,22 @@ export class AppComponent {
       }
     });
   }
+
+  update() {
+    this.af.database.object('/restaurant').update({
+      name: 'New name',
+      rating: 5
+    });
+  }
+
+  set() {
+    this.af.database.object('/restaurant').set({
+      name: 'Newer name',
+      rating: 4
+    });
+  }
+
+  setToNull() {
+    this.af.database.object('/restaurant').set(null);
+  }
 }

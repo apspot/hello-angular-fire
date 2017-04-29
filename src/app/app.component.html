@@ -2,6 +2,9 @@
   {{title}}
 </h1>
 <button (click)="add()">Add</button>
+<button (click)="update()">Update</button>
+<button (click)="set()">Set</button>
+<button (click)="setToNull()">SetToNull</button>
 <ul>
   <li *ngFor="let c of cuisines | async">{{ c.name }}</li>
 </ul>
