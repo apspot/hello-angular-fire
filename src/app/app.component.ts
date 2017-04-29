@@ -21,14 +21,14 @@ export class AppComponent {
   ngOnInit() {
     this.cuisines = this.af.database.list('/cuisines', {
       query: {
-        orderByValue: true
+        orderByValue: true //add this to Firebase Console -> Rules: "cuisines": { ".indexOn": ".value" }
       }
     });
 
     this.restaurants = this.af.database.list('/restaurants', {
       query: {
         orderByChild: 'rating', //we filter this property
-        startAt: 3,
+        startAt: 3, //add this to Firebase Console -> Rules: "restaurants": { ".indexOn": ["rating", "address/city"] }
         endAt: 5
       }
     })
