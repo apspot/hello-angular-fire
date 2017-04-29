@@ -16,6 +16,7 @@
   <li *ngFor="let c of cuisines | async">{{ c.$key + '-' + c.$value }}</li>
 </ul>
 <h1>Restaurants</h1>
+<button (click)="addRestaurant()">Add restaurant</button>
 <ul>
   <li *ngFor="let r of restaurants | async">
     {{ r.name }} - {{ (r.cuisineType | async)?.$value }}

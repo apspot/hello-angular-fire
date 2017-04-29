@@ -86,4 +86,15 @@ export class AppComponent {
       .then(x => console.log("SUCCESS"))
       .catch(error => console.log("ERROR", error));
   }
+
+  addRestaurant() {
+    this.af.database.list('/restaurants').push({}) //we create the objects in then, push is just to get a key
+      .then(x => {
+        let restaurant = { name: 'My new restaurant' };
+        let update = {};
+        update['restaurants/' + x.key] = restaurant; //set to null to remove the object from the DB
+        update['restaurants-by-city/camberwell/' + x.key] = restaurant; //set to null to remove the object from the DB
+        this.af.database.object('/').update(update);
+      });
+  }
 }
