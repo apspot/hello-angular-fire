@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFire, FirebaseListObservable } from 'angularfire2';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/take';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +14,7 @@ export class AppComponent {
   cuisines: FirebaseListObservable<any[]>;
   restaurants: Observable<any[]>;
   restaurant;
+  exists;
 
   constructor(private af: AngularFire) {}
 
@@ -31,6 +33,12 @@ export class AppComponent {
         return restaurants;
       });
     this.restaurant = this.af.database.object('/restaurant');
+
+    this.exists = this.af.database.object('/restaurants/1/features/1');
+    this.exists.take(1).subscribe(x => { //take(1): unsubscribes automatically after the first result
+      if (x && x.$value) console.log("EXISTS")
+      else console.log("NOT EXISTS");
+    });
   }
 
   add() {
