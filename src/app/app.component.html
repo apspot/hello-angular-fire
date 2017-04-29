@@ -5,6 +5,7 @@
 <button (click)="update()">Update</button>
 <button (click)="set()">Set</button>
 <button (click)="setToNull()">SetToNull</button>
+<button (click)="remove()">Remove</button>
 <ul>
   <li *ngFor="let c of cuisines | async">{{ c.name }}</li>
 </ul>

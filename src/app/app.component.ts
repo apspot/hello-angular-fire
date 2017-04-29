@@ -44,4 +44,10 @@ export class AppComponent {
   setToNull() {
     this.af.database.object('/restaurant').set(null);
   }
+
+  remove() {
+    this.af.database.object('/restaurant').remove()
+      .then(x => console.log("SUCCESS"))
+      .catch(error => console.log("ERROR", error));
+  }
 }
