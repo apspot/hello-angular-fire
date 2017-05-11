@@ -1,6 +1,13 @@
 <h1>
   {{title}}
 </h1>
+<p>
+  Hello {{ displayName }}
+  <img *ngIf="photoURL" src="{{ photoURL }}">
+  <button (click)="login()">Login</button>
+  <button (click)="logout()">Logout</button>
+</p>
+
 <button (click)="add()">Add</button>
 <button (click)="update()">Update</button>
 <button (click)="set()">Set</button>

@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFire, FirebaseListObservable } from 'angularfire2';
+import { AngularFire, FirebaseListObservable, AuthProviders, AuthMethods } from 'angularfire2';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/take';
+import { Http } from '@angular/http';
 
 @Component({
   selector: 'app-root',
@@ -15,10 +16,37 @@ export class AppComponent {
   restaurants: Observable<any[]>;
   restaurant;
   exists;
+  displayName;
+  photoURL;
 
-  constructor(private af: AngularFire) {}
+  constructor(private af: AngularFire, private http: Http) {}
 
   ngOnInit() {
+    this.af.auth.subscribe(authState => {
+      if (!authState) {
+        console.log("NOT LOGGED IN");
+        this.displayName = null;
+        this.photoURL = null;
+        return;
+      }
+      console.log("LOGGED IN", authState);      
+      this.displayName = authState.auth.displayName;
+      this.photoURL = authState.auth.photoURL;
+      let userRef = this.af.database.object('/users/' + authState.uid);
+      userRef.subscribe(user => {
+        let url = `https://graph.facebook.com/v2.9/${authState.facebook.uid}?fields=id,first_name,last_name,email,gender&access_token=${user.accessToken}`;
+        this.http.get(url).subscribe(response => {
+          let user = response.json();
+          userRef.update({
+            firstName: user.first_name,
+            lastName: user.last_name,
+            email: user.email,
+            gender: user.gender
+          });
+        });        
+      });
+    });
+
     this.cuisines = this.af.database.list('/cuisines', {
       query: {
         orderByValue: true //add this to Firebase Console -> Rules: "cuisines": { ".indexOn": ".value" }
@@ -52,6 +80,23 @@ export class AppComponent {
       if (x && x.$value) console.log("EXISTS")
       else console.log("NOT EXISTS");
     });
+  }
+
+  login() {
+    this.af.auth.login({
+      provider: AuthProviders.Facebook,      
+      method: AuthMethods.Popup,
+      scope: ['public_profile', 'user_friends'] //developer.facebook.com -> app review in the left menu -> approved items
+    }).then((authState: any) => { //must be Any to ignore accessToken not found error
+      console.log("AFTER LOGIN", authState); //this code will be executed only with AuthMethods.Popup because redirect leaves the app
+      this.af.database.object('/users/' + authState.uid).update({
+        accessToken: authState.facebook.accessToken //we will use this to call Graph API
+      });
+    });
+  }
+
+  logout() {
+    this.af.auth.logout();
   }
 
   add() {
