@@ -33,18 +33,20 @@ export class AppComponent {
       this.displayName = authState.auth.displayName;
       this.photoURL = authState.auth.photoURL;
       let userRef = this.af.database.object('/users/' + authState.uid);
-      userRef.subscribe(user => {
-        let url = `https://graph.facebook.com/v2.9/${authState.facebook.uid}?fields=id,first_name,last_name,email,gender&access_token=${user.accessToken}`;
-        this.http.get(url).subscribe(response => {
-          let user = response.json();
-          userRef.update({
-            firstName: user.first_name,
-            lastName: user.last_name,
-            email: user.email,
-            gender: user.gender
-          });
-        });        
-      });
+      if (authState.facebook) {
+        userRef.subscribe(user => {
+          let url = `https://graph.facebook.com/v2.9/${authState.facebook.uid}?fields=id,first_name,last_name,email,gender&access_token=${user.accessToken}`;
+          this.http.get(url).subscribe(response => {
+            let user = response.json();
+            userRef.update({
+              firstName: user.first_name,
+              lastName: user.last_name,
+              email: user.email,
+              gender: user.gender
+            });
+          });        
+        });
+      }
     });
 
     this.cuisines = this.af.database.list('/cuisines', {
@@ -97,6 +99,30 @@ export class AppComponent {
 
   logout() {
     this.af.auth.logout();
+  }
+
+  register() {
+    this.af.auth.createUser({
+      email: 'apspot01@gmail.com',
+      password: 'alma1234'
+    })
+    .then(authState => { 
+      console.log('REGISTER-THEN', authState);
+      authState.auth.sendEmailVerification(); //email text can be changed in Firebase Console -> authentication -> email templates
+    })
+    .catch(error => console.log('REGISTER-ERROR', error));
+  }
+
+  loginWithEmail() {
+    this.af.auth.login({
+      email: 'apspot01@gmail.com',
+      password: 'alma1234'
+    }, {
+      method: AuthMethods.Password,
+      provider: AuthProviders.Password
+    })
+    .then(authState => { console.log("LOGIN-THEN", authState) })
+    .catch(error => { console.log("LOGIN-ERROR", error) });
   }
 
   add() {
